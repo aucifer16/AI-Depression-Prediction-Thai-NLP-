@@ -1,121 +1,145 @@
 # 🧠 AI Depression Prediction (Thai NLP) — Naive Bayes
 
-โค้ดและเอกสารประกอบงานวิจัย **นวัตกรรมสื่อด้วยปัญญาประดิษฐ์เพื่อทำนายภาวะซึมเศร้า** สำหรับภาษาไทย โดยใช้เทคนิค **Natural Language Processing (NLP)** และ **Naive Bayes Classifier**
+This repository contains the code and research work for **AI-based depression risk prediction** in **Thai** social media texts using **Natural Language Processing (NLP)** and the **Naive Bayes Classifier**.
 
 > **Main script:** `runPredictAll.py`  
-> สคริปต์นี้โหลดโมเดลที่เทรนไว้ (`finalized_model.pickle`) และ `vocabulary_model.pickle` จากนั้นอ่านไฟล์ CSV คอลัมน์ `text` แล้วทำนายผลเป็นคอลัมน์ `Result`
+> Loads a pre-trained model (`finalized_model.pickle`) and `vocabulary_model.pickle`, reads an input CSV with a `text` column, and outputs predictions to a new CSV with a `Result` column.
 
 ---
 
-## ✨ คุณสมบัติเด่น
-- ตัดคำภาษาไทยด้วย `PyThaiNLP`
-- แปลงข้อความเป็น feature โดยอ้างอิงคำศัพท์ (vocabulary) จากโมเดลที่เทรนไว้
-- จัดจำแนกข้อความเป็นเชิงบวก/ลบ/กลาง (ตามที่โมเดลถูกสอนมา)
-- รับ/ส่งข้อมูลเป็น CSV ใช้งานง่าย
+## ✨ Features
+- Thai text tokenization via **PyThaiNLP**
+- Feature extraction using a **Bag-of-Words** vocabulary
+- Sentiment / depression-risk classification (positive / negative / neutral)
+- Easy CSV input and output workflow
 
 ---
 
-## 📂 โครงสร้างโปรเจกต์ (แนะนำ)
+## 📂 Project Structure
 ```
 .
-├── runPredictAll.py                   # สคริปต์หลักสำหรับรันทำนาย
-├── finalized_model.pickle             # โมเดล Naive Bayes ที่เทรนไว้
-├── vocabulary_model.pickle            # คำศัพท์/ฟีเจอร์ที่ใช้กับโมเดล
-├── usertwitter_iamsobad15feed.csv     # ข้อมูลอินพุต ต้องมีคอลัมน์ 'text'
-├── usertwitter_iamsobad15feed_Predit.csv  # ไฟล์ผลลัพธ์หลังรันทำนาย (auto-gen)
+├── runPredictAll.py                      # Main prediction script
+├── finalized_model.pickle                # Pre-trained Naive Bayes model
+├── vocabulary_model.pickle               # Vocabulary/features for the model
+├── usertwitter_iamsobad15feed.csv        # Input CSV (must include 'text' column)
+├── usertwitter_iamsobad15feed_Predit.csv # Output CSV with predictions (auto-generated)
 └── README.md
 ```
 
-> หมายเหตุ: ชื่อไฟล์ CSV อินพุต/เอาต์พุตในสคริปต์ตั้งตายตัว หากต้องการใช้ชื่ออื่นให้แก้ใน `runPredictAll.py`
+> Input/output file names are defined inside `runPredictAll.py`.  
+> Edit the script if you want to use custom filenames.
 
 ---
 
-## ⚙️ การติดตั้ง (Installation)
-
-แนะนำให้ใช้ Python 3.9+
+## ⚙️ Installation
+Requires **Python 3.9+**
 
 ```bash
-# 1) สร้างและเปิดใช้งาน virtual env (แนะนำ)
+# 1) Create and activate a virtual environment
 python -m venv .venv
 # Windows
-.venv\\Scripts\\activate
+.venv\Scripts\activate
 # macOS/Linux
 # source .venv/bin/activate
 
-# 2) ติดตั้งไลบรารีที่จำเป็น
+# 2) Install dependencies
 pip install nltk pythainlp pandas
 
-# 3) ดาวน์โหลดข้อมูล tokenizers ของ NLTK (เช่น punkt)
+# 3) Download tokenizer data for NLTK
 python -m nltk.downloader punkt
 ```
 
-> หากระบบถามหาโมดูลเพิ่มเติมของ PyThaiNLP (เช่น `pythainlp.corpus`) ให้ติดตั้งเพิ่มตามข้อความแจ้ง
-
 ---
 
-## 🚀 การใช้งาน (Usage)
+## 🚀 Usage
 
-เตรียมไฟล์ต่อไปนี้ไว้ในโฟลเดอร์เดียวกัน:
-- `finalized_model.pickle` (โมเดลที่เทรนแล้ว)
-- `vocabulary_model.pickle` (ชุดคำศัพท์ที่ใช้ทำฟีเจอร์)
-- `usertwitter_iamsobad15feed.csv` (ไฟล์อินพุต ต้องมีคอลัมน์ `text` ที่เป็นข้อความภาษาไทย)
+Make sure the following files exist in the same folder:
+- `finalized_model.pickle` — trained classifier
+- `vocabulary_model.pickle` — word features
+- `usertwitter_iamsobad15feed.csv` — input dataset (must include column `text`)
 
-ตัวอย่างสั่งรัน:
+Then run:
 ```bash
 python runPredictAll.py
 ```
 
-สคริปต์จะ:
-1) โหลดโมเดลและ vocabulary  
-2) ตัดคำและแปลงข้อความเป็นฟีเจอร์  
-3) ทำนายผลและบันทึกลงไฟล์ `usertwitter_iamsobad15feed_Predit.csv` (จะมีคอลัมน์ `Result` เพิ่มขึ้น)
+### The script will:
+1. Load the pre-trained model and vocabulary  
+2. Tokenize and featurize each text line  
+3. Predict the depression risk class  
+4. Write results to `usertwitter_iamsobad15feed_Predit.csv`
 
-ตัวอย่างโครง CSV อินพุต:
+#### Input example
 ```csv
 text
 "รู้สึกเหนื่อยมากเลยวันนี้"
 "วันนี้อากาศดีจัง"
 ```
 
-ตัวอย่างผลลัพธ์ (ตัดให้ดูบางส่วน):
+#### Output example
 ```csv
 text,Result
 "รู้สึกเหนื่อยมากเลยวันนี้",negative
 "วันนี้อากาศดีจัง",positive
 ```
 
-> หมายเหตุ: ชนิดป้ายกำกับ (`positive/negative/neutral`) จะขึ้นกับวิธีที่โมเดลถูกฝึกและแมปปิ้งในขั้นตอนเทรนเดิม
+---
+
+## 🧠 Model Details
+- Based on **NLTK NaiveBayesClassifier**
+- Features: `{word: True/False}` presence derived from tokenized text
+- Tokenizer: `pythainlp.tokenize.word_tokenize`
+- Performance (from the paper):
+  - **Training accuracy:** 88.17%
+  - **Testing accuracy:** 75.00%
+  - **F1 (Negative class):** 76.70%
+
+> The model performs best on **negative (depressive)** messages and has limited accuracy for **neutral or sarcastic** text.
 
 ---
 
-## 🧪 หมายเหตุด้านโมเดล
-- โมเดลนี้ถูกเทรนและบันทึกไว้แล้วใน `finalized_model.pickle` และใช้คำศัพท์จาก `vocabulary_model.pickle`
-- หากจะฝึกใหม่ ควรจัดเตรียมชุดข้อมูลที่มีความสมดุลของ **positive/neutral/negative** และระวัง **class imbalance**  
-- เนื่องจากเป็น **Bag-of-Words (BoW)** + Naive Bayes: ความหมายจากบริบทซับซ้อน, เสียดสี, อีโมจิ ฯลฯ อาจทำนายได้ยาก ควรพิจารณาเพิ่มข้อมูลฝึกหรือเทคนิคเสริม
+## 📊 Dataset Summary
+- Data collected from **Twitter (X)** hashtags such as  
+  `#โรคซึมเศร้า`, `#ซึมเศร้า`, `#คนเก่ง`, `#สู้ต่อไป`
+- Reviewed and labeled by **three psychiatrists**
+- Split: **70% training**, **30% testing**
+- ~15,000 total social media posts
 
 ---
 
-## 🔐 จริยธรรมและความเป็นส่วนตัว (Ethics & Privacy)
-- ข้อมูลโซเชียลมีเดียควรถูกทำให้ไม่สามารถระบุตัวตนได้ (anonymized)
-- ใช้เพื่อการวิจัย/การศึกษา/คัดกรองเบื้องต้นเท่านั้น **ไม่ใช่เครื่องมือวินิจฉัยทางการแพทย์**
-- ปฏิบัติตามกฎหมายคุ้มครองข้อมูลส่วนบุคคล (เช่น PDPA)
+## 🔐 Ethics and Privacy
+- All data were anonymized in compliance with Thailand’s **PDPA (Personal Data Protection Act)**  
+- The AI model is a **screening tool only** and not a diagnostic system  
+- Should not be used for clinical decisions without psychiatric review
 
 ---
 
-## 👩‍💻 ผู้เขียน (Authors)
-- Patcharin Boonsomthop (NIDA)  
-- Chutisant Kerdvibulvech (NIDA)
+## 👩‍💻 Authors
+- **Patcharin Boonsomthop** — National Institute of Development Administration (NIDA)  
+  ✉️ [patcharin.b@kru.ac.th](mailto:patcharin.b@kru.ac.th)
+
+- **Chutisant Kerdvibulvech** — National Institute of Development Administration (NIDA)  
+  ✉️ [chutisant.k@nida.ac.th](mailto:chutisant.k@nida.ac.th)
 
 ---
 
-## 📄 License
-โค้ดและโมเดลนี้เผยแพร่เพื่อ **การศึกษาและวิจัย** เท่านั้น ไม่อนุญาตให้นำไปใช้เชิงพาณิชย์หรือระบุตัวบุคคลจากข้อมูลโซเชียลมีเดีย
+## 📚 Citation
+If you use this repository in your research, please cite:
+
+```
+Boonsomthop, P., & Kerdvibulvech, C. (2025).
+Development of an Innovative Media Model Using Artificial Intelligence for Predicting Depression.
+Journal of Advanced Computational Intelligence and Intelligent Informatics (JACIII), 29(5), 1126–1131.
+```
 
 ---
 
-### ✅ Quick Checklist ก่อนเปิดใช้งานจริง
-- [ ] วางไฟล์ `finalized_model.pickle` และ `vocabulary_model.pickle` ถูกที่
-- [ ] ตรวจสอบว่า CSV อินพุตมีคอลัมน์ `text`
-- [ ] ลง `nltk`, `pythainlp`, `pandas` ครบถ้วน
-- [ ] ดาวน์โหลด `punkt` สำหรับ NLTK เรียบร้อย
-- [ ] ไฟล์ผลลัพธ์จะชื่อ `usertwitter_iamsobad15feed_Predit.csv`
+## 🧾 License
+This project is released for **academic and educational purposes only**.  
+Commercial use, redistribution, or identification of social media users is **strictly prohibited**.
+
+---
+
+> ⚠️ **Disclaimer:**  
+> This model serves as an early warning tool for detecting possible depression indicators in social media posts.  
+> It should **not** be used to replace professional medical diagnosis or treatment.
