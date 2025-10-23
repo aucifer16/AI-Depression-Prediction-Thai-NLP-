@@ -1,33 +1,35 @@
-# 🧠 AI Depression Prediction (Thai NLP) — Naive Bayes
+# 🧠 AI Depression Prediction (Thai NLP) — Safe Naive Bayes (JSON Version)
 
-This repository contains the code and research work for **AI-based depression risk prediction** in **Thai** social media texts using **Natural Language Processing (NLP)** and the **Naive Bayes Classifier**.
+This repository contains the improved and secure version of the **AI-based depression risk prediction** system for **Thai** social media texts.  
+It uses **Natural Language Processing (NLP)** and the **Naive Bayes Classifier**, with all model data stored in **JSON format** for safety (no `pickle` execution).
 
-> **Main script:** `runPredictAll.py`  
-> Loads a pre-trained model (`finalized_model.pickle`) and `vocabulary_model.pickle`, reads an input CSV with a `text` column, and outputs predictions to a new CSV with a `Result` column.
+> **Main script:** `safe_run_nb.py`  
+> Loads a pre-trained JSON model (`finalized_model_nltk_nb.json`) and `vocabulary_words.json`, reads an input CSV with a `text` column, and outputs predictions to a new CSV with a `Result` column.
 
 ---
 
 ## ✨ Features
-- Thai text tokenization via **PyThaiNLP**
-- Feature extraction using a **Bag-of-Words** vocabulary
-- Sentiment / depression-risk classification (positive / negative / neutral)
-- Easy CSV input and output workflow
+- **Thai text tokenization** using [PyThaiNLP](https://github.com/PyThaiNLP/pythainlp)
+- **Bag-of-Words** feature extraction (`{word: True/False}`)
+- **Naive Bayes classification** for depression-risk detection
+- **CSV input/output pipeline** — ready for batch text prediction
+- **Safe & secure**: all model data are stored as JSON, not pickle
 
 ---
 
 ## 📂 Project Structure
 ```
 .
-├── runPredictAll.py                      # Main prediction script
-├── finalized_model.pickle                # Pre-trained Naive Bayes model
-├── vocabulary_model.pickle               # Vocabulary/features for the model
-├── usertwitter_iamsobad15feed.csv        # Input CSV (must include 'text' column)
-├── usertwitter_iamsobad15feed_Predit.csv # Output CSV with predictions (auto-generated)
+├── safe_run_nb.py                        # Main prediction script (safe version)
+├── finalized_model_nltk_nb.json          # Pre-trained model (JSON)
+├── vocabulary_words.json                 # Vocabulary list (JSON)
+├── 28_08_2023 17_35_12.csv               # Input CSV (must include 'text' column)
+├── 28_08_2023 17_35_12P.csv              # Output CSV with predictions
 └── README.md
 ```
 
-> Input/output file names are defined inside `runPredictAll.py`.  
-> Edit the script if you want to use custom filenames.
+> Input/output filenames are defined inside `safe_run_nb.py`.  
+> You can edit them to match your own dataset.
 
 ---
 
@@ -40,12 +42,12 @@ python -m venv .venv
 # Windows
 .venv\Scripts\activate
 # macOS/Linux
-# source .venv/bin/activate
+source .venv/bin/activate
 
 # 2) Install dependencies
 pip install nltk pythainlp pandas
 
-# 3) Download tokenizer data for NLTK
+# 3) Download tokenizer data for NLTK (if not already installed)
 python -m nltk.downloader punkt
 ```
 
@@ -53,21 +55,22 @@ python -m nltk.downloader punkt
 
 ## 🚀 Usage
 
-Make sure the following files exist in the same folder:
-- `finalized_model.pickle` — trained classifier
-- `vocabulary_model.pickle` — word features
-- `usertwitter_iamsobad15feed.csv` — input dataset (must include column `text`)
+Make sure the following files exist in the same directory:
+- `finalized_model_nltk_nb.json` — pre-trained Naive Bayes model  
+- `vocabulary_words.json` — list of vocabulary used for feature extraction  
+- `28_08_2023 17_35_12.csv` — input dataset (must include column `text`)
 
 Then run:
 ```bash
-python runPredictAll.py
+python safe_run_nb.py
 ```
 
 ### The script will:
-1. Load the pre-trained model and vocabulary  
-2. Tokenize and featurize each text line  
-3. Predict the depression risk class  
-4. Write results to `usertwitter_iamsobad15feed_Predit.csv`
+1. Load the model and vocabulary from JSON  
+2. Tokenize each sentence with PyThaiNLP  
+3. Convert text into bag-of-words features  
+4. Predict the depression risk class  
+5. Save the results to a new CSV file  
 
 #### Input example
 ```csv
@@ -87,30 +90,36 @@ text,Result
 
 ## 🧠 Model Details
 - Based on **NLTK NaiveBayesClassifier**
-- Features: `{word: True/False}` presence derived from tokenized text
+- Features: `{word: True/False}` per tokenized word
 - Tokenizer: `pythainlp.tokenize.word_tokenize`
-- Performance (from the paper):
-  - **Training accuracy:** 88.17%
-  - **Testing accuracy:** 75.00%
-  - **F1 (Negative class):** 76.70%
+- Stored as **JSON** instead of pickle for safer deployment
 
-> The model performs best on **negative (depressive)** messages and has limited accuracy for **neutral or sarcastic** text.
+### Original Model Performance
+(from the published research paper)
+| Metric | Value |
+|:--|:--|
+| Training Accuracy | 88.17% |
+| Testing Accuracy | 75.00% |
+| F1 Score (Negative class) | 76.70% |
+
+> The model performs best for **negative (depressive)** messages  
+> and has moderate accuracy for **neutral or sarcastic** content.
 
 ---
 
 ## 📊 Dataset Summary
-- Data collected from **Twitter (X)** hashtags such as  
+- Collected from **Twitter (X)** hashtags:  
   `#โรคซึมเศร้า`, `#ซึมเศร้า`, `#คนเก่ง`, `#สู้ต่อไป`
-- Reviewed and labeled by **three psychiatrists**
+- Manually labeled by **three psychiatrists**
 - Split: **70% training**, **30% testing**
-- ~15,000 total social media posts
+- Total size: ~15,000 posts
 
 ---
 
 ## 🔐 Ethics and Privacy
-- All data were anonymized in compliance with Thailand’s **PDPA (Personal Data Protection Act)**  
-- The AI model is a **screening tool only** and not a diagnostic system  
-- Should not be used for clinical decisions without psychiatric review
+- All data were **anonymized** under Thailand’s **PDPA**  
+- This AI model is a **screening tool**, not a clinical diagnostic  
+- Should not be used for medical decision-making without psychiatric evaluation
 
 ---
 
@@ -141,5 +150,5 @@ Commercial use, redistribution, or identification of social media users is **str
 ---
 
 > ⚠️ **Disclaimer:**  
-> This model serves as an early warning tool for detecting possible depression indicators in social media posts.  
-> It should **not** be used to replace professional medical diagnosis or treatment.
+> This AI model serves as an early screening tool for detecting potential depression indicators in social media posts.  
+> It should **not** be used as a substitute for professional diagnosis or therapy.
